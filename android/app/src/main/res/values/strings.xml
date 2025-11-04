@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">FileRise</string>
+    <string name="title_activity_main">FileRise</string>
+    <string name="package_name">net.filerise.app</string>
+    <string name="custom_url_scheme">net.filerise.app</string>
+</resources>

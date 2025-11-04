@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <!-- Disable zoom everywhere -->
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, minimum-scale=1, maximum-scale=1">
+  <title>FileRise Mobile</title>
+  <link rel="icon" href="assets/icon-192.png">
+  <style>
+    :root { --brand:#2196F3; color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    html,body { height:100%; margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans"; }
+    body {
+      background:
+        radial-gradient(1200px 600px at -10% -20%, rgba(33,150,243,.25), transparent 40%),
+        radial-gradient(800px 400px at 120% 10%, rgba(33,150,243,.18), transparent 45%),
+        linear-gradient(180deg, rgba(0,0,0,.04), transparent 30%);
+      /* Helps avoid double-tap zoom on iOS */
+      -webkit-tap-highlight-color: transparent;
+    }
+    .wrap { max-width:720px; margin:0 auto; padding:20px; }
+    .hero { margin: 8vh 0 22px; display:flex; align-items:center; gap:14px; }
+    .logo { width:48px; height:48px; border-radius:14px; background: conic-gradient(from 180deg at 50% 50%, #64B5F6, #2196F3, #1976D2, #64B5F6); display:grid; place-items:center; box-shadow: 0 6px 24px rgba(33,150,243,.35); }
+    .logo img { width:28px; height:28px; }
+    h1 { margin:0; font-size: clamp(22px, 4vw, 28px); letter-spacing:.2px }
+    p.muted { margin:.35rem 0 0; color: rgba(0,0,0,.55); }
+    @media (prefers-color-scheme: dark) { p.muted { color: rgba(255,255,255,.65); } }
+
+    .card { border:1px solid rgba(0,0,0,.08); background: rgba(255,255,255,.65); backdrop-filter: blur(8px); border-radius:16px; padding:16px; box-shadow: 0 6px 30px rgba(0,0,0,.08); }
+    @media (prefers-color-scheme: dark) { .card { background: rgba(19,24,39,.7); border-color: rgba(255,255,255,.08); } }
+
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .input { width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(0,0,0,.12); background:transparent; color:inherit; font-size:16px; }
+    @media (prefers-color-scheme: dark) { .input { border-color: rgba(255,255,255,.15); } }
+
+    .btn { appearance:none; cursor:pointer; user-select:none; border-radius:12px; padding:10px 14px; font-weight:700; border:0; transition:.15s ease opacity, .15s ease filter; touch-action: manipulation; }
+    .btn.primary { color:#fff; background: linear-gradient(180deg, #64B5F6, #2196F3 65%, #1976D2); box-shadow: 0 8px 20px rgba(33,150,243,.35); }
+    .btn.ghost { background:transparent; border:1px solid rgba(0,0,0,.15); color:inherit; }
+    .btn.danger { background:transparent; border:1px solid rgba(244,67,54,.35); color:#f44336; }
+    .btn[disabled] { opacity:.5; cursor:not-allowed; filter:grayscale(20%); }
+    @media (prefers-color-scheme: dark) {
+      .btn.ghost { border-color: rgba(255,255,255,.18); }
+      .btn.danger { border-color: rgba(244,67,54,.45); }
+    }
+
+    .list { margin-top:12px; display:grid; gap:10px; }
+    .chip { padding:12px; border-radius:12px; border:1px solid rgba(0,0,0,.1); background: rgba(255,255,255,.6); }
+    @media (prefers-color-scheme: dark) { .chip { background: rgba(0,0,0,.15); border-color: rgba(255,255,255,.1); } }
+    .chip.active { outline:3px solid rgba(33,150,243,.35); border-color:#2196F3; }
+    .chip .top { display:flex; gap:10px; align-items:center; margin-bottom:10px; justify-content:space-between; }
+    .leftGroup { display:flex; gap:10px; align-items:center; }
+    .chip .icon { width:22px; height:22px; border-radius:6px; overflow:hidden; display:grid; place-items:center; background:#fff; }
+    .chip .icon img { width:100%; height:100%; object-fit:cover; display:block; }
+    .chip .name { font-weight:800; }
+    .chip .host { font-size:12px; opacity:.8; margin-top:2px }
+    .chip .actions { display:flex; gap:8px; flex-wrap:wrap; }
+    .sep { height:1px; background:rgba(0,0,0,.08); margin:14px 0; }
+    @media (prefers-color-scheme: dark) { .sep { background:rgba(255,255,255,.08); } }
+    small.tip { color: rgba(0,0,0,.5); }
+    @media (prefers-color-scheme: dark) { small.tip { color: rgba(255,255,255,.6); } }
+
+    .status { display:flex; align-items:center; gap:6px; font-size:12px; opacity:.9 }
+    .dot { width:10px; height:10px; border-radius:50%; background:#9ca3af; }
+    .dot.on  { background:#10B981; box-shadow:0 0 0 3px rgba(16,185,129,.18); }
+    .dot.off { background:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.18); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="logo" aria-hidden="true"><img src="assets/logo.svg" alt="FileRise"></div>
+      <div>
+        <h1>Connect to FileRise</h1>
+        <p class="muted">Save one or more servers and switch any time.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <input id="nameInput" class="input" placeholder="Display name (optional)" style="flex:1 1 180px;">
+        <input id="urlInput"  class="input" placeholder="https://files.example.com"  style="flex:2 1 260px;">
+        <button id="addBtn" class="btn primary">Save</button>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="row" style="justify-content:space-between; margin-bottom:6px;">
+        <div style="font-weight:800;">Saved servers</div>
+        <small class="tip">Tip: triple-tap the web app header to open the in-app switcher.</small>
+      </div>
+
+      <div id="list" class="list"></div>
+    </div>
+  </div>
+
+  <script src="capacitor.js"></script>
+  <script>
+  (function(){
+    // --- hard-disable zoom (pinch + double-tap) ---
+    (function enforceNoZoom(){
+      let m = document.querySelector('meta[name=viewport]');
+      const content = 'width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, minimum-scale=1, maximum-scale=1';
+      if (!m){ m=document.createElement('meta'); m.setAttribute('name','viewport'); document.head.appendChild(m); }
+      m.setAttribute('content', content);
+      // iOS gesture events
+      const block = e => e.preventDefault();
+      document.addEventListener('gesturestart', block, {passive:false});
+      document.addEventListener('gesturechange', block, {passive:false});
+      document.addEventListener('gestureend', block, {passive:false});
+      // block double-tap zoom
+      let lastTouch=0;
+      document.addEventListener('touchend', e => {
+        const now = Date.now();
+        if (now - lastTouch < 350) e.preventDefault();
+        lastTouch = now;
+      }, {passive:false});
+    })();
+
+    const Cap = window.Capacitor || {};
+    const Plugins = Cap.Plugins || {};
+    const Pref = Plugins.Preferences ? {
+      get: ({key}) => Plugins.Preferences.get({key}),
+      set: ({key,value}) => Plugins.Preferences.set({key, value}),
+      remove: ({key}) => Plugins.Preferences.remove({key})
+    } : {
+      get: async ({key}) => ({ value: localStorage.getItem(key) || null }),
+      set: async ({key,value}) => localStorage.setItem(key, value),
+      remove: async ({key}) => localStorage.removeItem(key)
+    };
+    const Http = (Plugins.Http || Plugins.CapacitorHttp) || null;
+
+    const K_INST='fr_instances_v1', K_ACTIVE='fr_active_v1', K_STATUS='fr_status_v1';
+
+    const $ = s => document.querySelector(s);
+    function normalize(u){ let v=(u||'').trim(); if(!v) return ''; if(!/^https?:\/\//i.test(v)) v='https://'+v; return v.replace(/\/+$/,''); }
+    const host = u => { try{ return new URL(normalize(u)).hostname }catch{ return '' } };
+    const originOf = u => { try{ return new URL(normalize(u)).origin }catch{ return '' } };
+    const faviconUrl = u => { try{ const x=new URL(normalize(u)); return x.origin+'/favicon.ico' }catch{ return '' } };
+    function initialsIcon(hn='FR'){ const t=(hn||'FR').replace(/^www\./,'').slice(0,2).toUpperCase();
+      const svg=`<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'>
+        <rect width='100%' height='100%' rx='12' ry='12' fill='#2196F3'/>
+        <text x='50%' y='54%' text-anchor='middle' font-family='system-ui,-apple-system,Segoe UI,Roboto,sans-serif'
+              font-size='28' font-weight='700' fill='#fff'>${t}</text></svg>`;
+      return 'data:image/svg+xml;utf8,'+encodeURIComponent(svg);
+    }
+
+    async function getStatusCache(){ const raw=(await Pref.get({key:K_STATUS})).value; try{ return raw?JSON.parse(raw):{} }catch{ return {}; } }
+    async function writeStatus(origin, ok){ const cache=await getStatusCache(); cache[origin]={ ok, ts: Date.now() }; await Pref.set({key:K_STATUS, value:JSON.stringify(cache)}); }
+
+    async function verifyFileRise(u, timeout=5000){
+      if (!u || !Http) return {ok:false};
+      const base = normalize(u);
+      const origin = originOf(base);
+      const tryJson = async (url, validate) => {
+        try{
+          const r = await Http.get({ url, connectTimeout:timeout, readTimeout:timeout, headers:{'Accept':'application/json','Cache-Control':'no-cache'} });
+          if (r && r.data) {
+            const j = (typeof r.data === 'string') ? JSON.parse(r.data) : r.data;
+            return !!validate(j);
+          }
+        }catch(_){}
+        return false;
+      };
+      if (await tryJson(origin + '/siteConfig.json', j => j && (j.appTitle || j.headerTitle || j.auth || j.oidc || j.basicAuth))) return {ok:true, origin};
+      if (await tryJson(origin + '/api/ping.php',    j => j && (j.ok===true || j.status==='ok' || j.pong || j.app==='FileRise'))) return {ok:true, origin};
+      if (await tryJson(origin + '/api/version.php', j => j && (j.version || j.app==='FileRise'))) return {ok:true, origin};
+      try{
+        const r = await Http.get({ url: origin+'/', connectTimeout:timeout, readTimeout:timeout, headers:{'Cache-Control':'no-cache'} });
+        if (typeof r.data === 'string' && /FileRise/i.test(r.data)) return {ok:true, origin};
+      }catch(_){}
+      return {ok:false, origin};
+    }
+
+    async function probeReachable(u, timeout=4000){
+      try{
+        const base = new URL(normalize(u)).origin, ico=base+'/favicon.ico';
+        if (Http){
+          try{ const r=await Http.get({ url: ico, connectTimeout:timeout, readTimeout:timeout, headers:{'Cache-Control':'no-cache'} });
+               if (r && typeof r.status==='number' && r.status<500) return true; }catch(e){}
+          try{ const r2=await Http.get({ url: base+'/', connectTimeout:timeout, readTimeout:timeout, headers:{'Cache-Control':'no-cache'} });
+               if (r2 && typeof r2.status==='number' && r2.status<500) return true; }catch(e){}
+          return false;
+        }
+        return await new Promise(res=>{
+          const img=new Image(), t=setTimeout(()=>done(false),timeout);
+          function done(ok){ clearTimeout(t); img.onload=img.onerror=null; res(ok); }
+          img.onload=()=>done(true); img.onerror=()=>done(false);
+          img.src = ico + (ico.includes('?')?'&':'?') + '__fr=' + Date.now();
+        });
+      }catch{ return false; }
+    }
+
+    async function loadInstances(){ const raw=(await Pref.get({key:K_INST})).value; try{ return raw?JSON.parse(raw):[] }catch{ return [] } }
+    async function saveInstances(list){ await Pref.set({key:K_INST, value:JSON.stringify(list)}); }
+    async function getActive(){ return (await Pref.get({key:K_ACTIVE})).value }
+    async function setActive(id){ await Pref.set({key:K_ACTIVE, value:id||''}); }
+
+    function renderChip(item, isActive){
+      const wrap=document.createElement('div'); wrap.className='chip'+(isActive?' active':''); wrap.dataset.id=item.id;
+
+      const top=document.createElement('div'); top.className='top';
+      const left=document.createElement('div'); left.className='leftGroup';
+
+      const icon=document.createElement('div'); icon.className='icon';
+      const img=document.createElement('img'); const hv=host(item.url);
+      img.alt=''; img.src=item.favicon||faviconUrl(item.url)||initialsIcon(hv);
+      img.onerror=()=>{ img.onerror=null; img.src=initialsIcon(hv); };
+      icon.appendChild(img);
+
+      const txt=document.createElement('div');
+      txt.innerHTML=`<div class="name">${item.name||hv}</div><div class="host">${hv}</div>`;
+      left.appendChild(icon); left.appendChild(txt);
+
+      const status=document.createElement('div'); status.className='status';
+      status.innerHTML=`<span class="dot" id="dot-${item.id}"></span><span id="lbl-${item.id}">Checking…</span>`;
+      top.appendChild(left); top.appendChild(status);
+
+      const actions=document.createElement('div'); actions.className='actions';
+      const bOpen=Object.assign(document.createElement('button'),{className:'btn primary',textContent:'Open', disabled:true});
+      const bRen =Object.assign(document.createElement('button'),{className:'btn ghost',  textContent:'Rename'});
+      const bDel =Object.assign(document.createElement('button'),{className:'btn danger', textContent:'Remove'});
+
+      bOpen.addEventListener('click', async ()=>{ if (bOpen.disabled) return;
+        await setActive(item.id);
+        const url=normalize(item.url), withFlag=url+(url.includes('?')?'&':'?')+'frapp=1';
+        try{ location.replace(withFlag);
+             setTimeout(()=>{ if((location.origin||'').startsWith('capacitor://')&&Plugins.Browser?.open){ Plugins.Browser.open({url:withFlag}); }},500);
+        }catch{ Plugins.Browser?.open?.({url:withFlag}); }
+      });
+
+      bRen.addEventListener('click', async ()=>{ const nn=prompt('New display name:', item.name||hv);
+        if(nn!=null){ const L=await loadInstances(); const it=L.find(x=>x.id===item.id); if(it){ it.name=nn.trim(); it.lastUsed=Date.now(); await saveInstances(L); render(); } }
+      });
+
+      bDel.addEventListener('click', async ()=>{ if(!confirm('Remove this server?')) return;
+        let L=await loadInstances(); L=L.filter(x=>x.id!==item.id); await saveInstances(L);
+        const a=await getActive(); if(a===item.id) await setActive(L[0]?.id||''); render();
+      });
+
+      actions.appendChild(bOpen); actions.appendChild(bRen); actions.appendChild(bDel);
+
+      wrap.appendChild(top); wrap.appendChild(actions);
+      return wrap;
+    }
+
+    async function updateStatus(item){
+      const dot = document.getElementById('dot-'+item.id);
+      const lbl = document.getElementById('lbl-'+item.id);
+      const openBtn = document.querySelector(`.chip[data-id="${item.id}"] .btn.primary`);
+      if(!dot||!lbl||!openBtn) return;
+
+      lbl.textContent='Checking…'; dot.classList.remove('on','off');
+      const ok = await probeReachable(item.url,2500);
+      dot.classList.add(ok?'on':'off'); lbl.textContent = ok?'Online':'Offline';
+      openBtn.disabled = !ok;
+
+      const o = originOf(item.url); if (o) writeStatus(o, ok);
+    }
+
+    async function render(){
+      const listEl=$('#list'); listEl.innerHTML='';
+      const list=await loadInstances(); const active=await getActive();
+      if(!list.length){ listEl.innerHTML='<div style="opacity:.75">No servers yet. Add one above to get started.</div>'; return; }
+
+      list.sort((a,b)=>(b.lastUsed||0)-(a.lastUsed||0)).forEach(item=>{
+        const chip = renderChip(item, item.id===active);
+        listEl.appendChild(chip);
+      });
+
+      list.forEach(updateStatus);
+    }
+
+    async function addServer(){
+      const name=$('#nameInput').value.trim();
+      const url = normalize($('#urlInput').value);
+      if(!url){ alert('Enter a valid URL'); return; }
+
+      const vf = await verifyFileRise(url);
+      if (!vf.ok) { alert('That address does not look like a FileRise server.'); return; }
+
+      let list=await loadInstances();
+      const hv=host(url);
+      const dupe=list.find(i=>host(i.url)===hv);
+      const inst=dupe||{ id:'i'+Math.random().toString(36).slice(2)+Date.now().toString(36) };
+      inst.name = name || inst.name || hv;
+      inst.url  = url;
+      inst.favicon = faviconUrl(url);
+      inst.lastUsed = Date.now();
+
+      if(!dupe) list.push(inst);
+      await saveInstances(list);
+      await setActive(inst.id);
+
+      if (vf.origin) await writeStatus(vf.origin, true);
+
+      $('#nameInput').value=''; $('#urlInput').value='';
+      render();
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      $('#addBtn').addEventListener('click', addServer);
+      $('#urlInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addServer(); });
+      render();
+    });
+  })();
+  </script>
+</body>
+</html>

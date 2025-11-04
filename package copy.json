@@ -1,0 +1,28 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn.lock
+
+# Capacitor build output
+app/dist/
+app/build/
+
+# iOS
+ios/App/build/
+ios/DerivedData/
+ios/App/App.xcodeproj/project.xcworkspace/xcuserdata/
+ios/App/*.xcworkspace/xcuserdata/
+ios/App/**/*.xcuserstate
+ios/App/Pods/                 # (we recommend NOT committing Pods)
+ios/App/Podfile.lock          # DO commit this
+
+# Android
+android/.gradle/
+android/gradle/
+android/app/build/
+android/local.properties
+android/captures/
+*.iml
+
+# macOS cruft
+.DS_Store
