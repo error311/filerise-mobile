@@ -2,9 +2,8 @@
 
 A lightweight iOS/Android companion app for connecting to one or more FileRise servers.  
 Works great with FileRise v1.8.2+.
-<img width="603" height="1311" alt="IMG_0573" src="https://github.com/user-attachments/assets/327960ab-1e03-4be9-b2ac-65577093beb9" />
-<img width="603" height="1311" alt="IMG_0574" src="https://github.com/user-attachments/assets/01a80b4a-7b9c-4dba-9d80-0bc196d3d642" />
 
+![FileRise-Mobile](https://github.com/user-attachments/assets/7ae89713-98f3-423f-898f-3c8f03a56b66)
 
 
 ## Features
